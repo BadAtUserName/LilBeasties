@@ -14,21 +14,23 @@ class Monster:
     self.last_interaction = time.time() #recored the current time
     self.ascii_art = ""  # Placeholder for ASCII art
 
-  def talk(self):
+  #def talk(self):
     """Generate a conversational response based on the monster's mood."""
-    if not self.is_alive:
-      print(f"{self.name} is no longer here to talk. 💔")
-      return
-    
+    #if not self.is_alive:
+      #print(f"{self.name} is no longer here to talk. 💔")
+      #return
+
   def check_boredom(self):
-    """Check if the monster is bored and might run away."""
-    current_time = time.time()
-    elapsed_time = current_time - self.last_interaction
+    #Check if the monster is bored and might run away.
+    current_time = time.time() # Get the current time
+    elapsed_time = current_time - self.last_interaction # Calculate time since last interaction
+  
 
   # If the elapsed time exceeds the boredom threshold, the monster runs away
     if elapsed_time > self.boredom_threshold and self.is_present:
       self.is_present = False
       print(f"Oh no! {self.name} got bored and ran away! 😢")
+      
 
   # Responses based on happiness level
     if self.happiness > 80:
@@ -56,7 +58,7 @@ class Monster:
       print(f"{self.name} is no longer with us and cannot eat. 💔")
       return
     
-    self.hunger += amount
+    self.hunger += amount # Increase hunger level
     self.last_interaction = time.time() #update the last interaction time
 
     if self.hunger > 150: #Monster dies
@@ -79,36 +81,43 @@ class Monster:
     
     self.last_interaction = time.time() #update last interaction
 
-    if self.energy > 10:
-      self.happiness = min(self.happiness + amount, 100)
-      self.energy = max(self.energy - 10, 0)
+    if self.energy > 10: # If energy is sufficient for playing
+      self.happiness = min(self.happiness + amount, 100) # Increase happiness
+      self.energy = max(self.energy - 10, 0) # Decrease energy
       print(f"Happy, Happy, Happy! {self.name} is so happy...and not bored")
-    else:
+    else: # If energy is too low
       print(f"YAWN! Double Yawn {self.name} is sleepy")  
 
   def sleep(self):
     """The monster needs to sleep so it can rest and age"""
-    self.energy = 100
-    self.age += 1
+    self.energy = 100 # Fully restore energy
+    self.age += 1 # Increment age by 1 day
     print(f"WEEEeee I {self.name} am so well rested")
     print(f"after all that sleep i'm {self.age} years old")
 
   def display(self):
-    print(self.ascii_art)
-    print(f"Name: {self.name}")
-    print(f"Hunger: {self.hunger}")
-    print(f"Happines: {self.happiness}")
-    print(f"Energy: {self.energy}")
-    print(f"Age: {self.age}")
+    """
+    Display the current state of the monster, including its ASCII art and stats.
+    This method provides a snapshot of the monster's key attributes.
+    """
+    print(self.ascii_art) # Print ASCII art
+    print(f"Name: {self.name}") #Display name
+    print(f"Hunger: {self.hunger}") #Display hunger level
+    print(f"Happines: {self.happiness}") #Display happiness
+    print(f"Energy: {self.energy}") #display energy
+    print(f"Age: {self.age}") #display agg
     if not self.is_alive:
       print(f"status: {self.name} is no longer alive")
+
+# Define the subclasses for specific monster types (Fluffernog, Zogamog, BeansBeans)
+# Each subclass includes unique attributes and behaviors specific to the monster type
 
 #Subclass for monsters
 class Fluffernog(Monster):
   def __init__(self,name):
     super().__init__(name)
-    self.fur_color = "Rainbow"
-    self.energy = 70
+    self.fur_color = "Rainbow" # Unique attribute
+    self.energy = 70 # Default energy level for Fluffernog
     self.ascii_art = r"""
            _____
          .-'     `-.
@@ -179,6 +188,7 @@ class Food:
     self.name = name
     self.nutrition_value = nutrition_value
 
+#object that holds food information
 apple = Food("Apple", 10)
 pizza = Food("Pizza", 25)
 cupcake = Food("Cupcake", 15)
@@ -200,20 +210,25 @@ def interact_with_monster(monster):
 
     #check boredom periodically
     monster.check_boredom()
-
+    # Display interaction options for the user
     print("\What would you like to do?")
     print("1. Feed your monster")
     print("2. Play with your monster")
     print("3. Let your monster sleep")
-    print("4. Talk to your monster")
+    #print("4. Talk to your monster")
     print("5. Quit")
     choice = input("Enter the number of your choice")
 
+    # Loop through the food menu and display each food item with its index
+    # Enumerate starts counting from 1 to make it more user-friendly
     if choice == "1": #Feed your monster
       print("Choose food to feed your monster")
       for i, food in enumerate(food_menu, 1):
-        print(f"{i}. {food.name} (+{food.nutrition_value} hunger)")
-      food_choice = int(input("Enter then number of your choice")) - 1
+        print(f"{i}. {food.name} (+{food.nutrition_value} hunger)") # Show the food name and its nutrition value
+
+      # Prompt the user to enter their food choice
+      # Subtract 1 from the input to match the zero-based index of the food menu
+      food_choice = int(input("Enter then number of your choice")) - 1 #subtracts one to accomodate for zero based index
 
       if 0 <= food_choice <len(food_menu):
         selected_food = food_menu[food_choice]
@@ -236,8 +251,8 @@ def interact_with_monster(monster):
     elif choice == "3": #Let monster sleep
       monster.sleep()
     
-    elif choice == 4:
-      monster.talk()  # Engage in conversation
+    #elif choice == 4:
+      #monster.talk()  # Engage in conversation
     
     elif choice == 5:
       print(f"Bye bye {monster.name}! I'll be waiting.")
@@ -262,18 +277,32 @@ monster_classes = {
 # Display the options for monsters
 print("\nChoose your monster type:")
 for i, monster_type in enumerate(monster_classes.keys(), 1):
-  print(f"{i}.{monster_type}")
+    print(f"{i}.{monster_type}")
 
-choice = int(input("Enter the number of your choice: "))
-selected_type_name = list(monster_classes.keys())[choice -1]
-name = input("what will you name your monster?")
+# Validate input for monster selection
+while True:
+  try:
+    choice = input("Enter the number of your choice: ").strip()
+    if not choice:  # Check for empty input
+        raise ValueError("Input cannot be empty. Please enter a number.")
+    choice = int(choice)  # Convert to integer
+    if 1 <= choice <= len(monster_classes):  # Ensure input is within range
+        break
+    else:
+      print(f"Invalid choice. Please choose a number between 1 and {len(monster_classes)}.")
+  except ValueError:
+    print("Monsters cant understand that! Please enter a proper number, human!")
 
-#Create the monster instance base on the user's choice
+# Create the monster based on the user's choice
+selected_type_name = list(monster_classes.keys())[choice - 1] #- 1 adjusts the input to a zero-based index
+name = input("What will you name your monster? ").strip()
+
+# Create the monster instance based on the user's choice
 selected_class = monster_classes[selected_type_name]
 my_monster = selected_class(name)
 print(f"You created a {selected_type_name} named {name}")
 
-#Display the monsters stats and art
+# Display the monster's stats and art
 my_monster.display()
 
 # Start interacting with the monster
